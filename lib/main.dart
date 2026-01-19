@@ -1,7 +1,7 @@
 import 'package:asusctl_gui/pages/control_center_page.dart';
 import 'package:asusctl_gui/pages/not_found_page.dart';
-import 'package:asusctl_gui/providers/theme_provider.dart';
 import 'package:asusctl_gui/theme/app_theme.dart';
+import 'package:asusctl_gui/theme/theme_provider.dart';
 import 'package:asusctl_gui/utils/availability.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

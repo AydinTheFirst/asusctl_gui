@@ -33,7 +33,7 @@ class AuraCard extends ConsumerWidget {
           // Aura Mode
           auraStateAsync.when(
             data: (state) => DropdownButtonFormField<Aura>(
-              value: state.mode,
+              initialValue: state.mode,
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Theme.of(context).hoverColor,
@@ -155,7 +155,10 @@ class AuraCard extends ConsumerWidget {
             TextButton(
               child: const Text('Got it'),
               onPressed: () {
-                final hex = pickedColor.value.toRadixString(16).substring(2);
+                final hex = pickedColor
+                    .toARGB32()
+                    .toRadixString(16)
+                    .substring(2);
                 ref.read(auraNotifierProvider.notifier).setColor(hex);
                 Navigator.of(context).pop();
               },

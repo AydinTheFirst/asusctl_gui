@@ -8,6 +8,8 @@ class ProfileCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ThemeData theme = Theme.of(context);
+
     final profileAsync = ref.watch(profileNotifierProvider);
 
     return GlassCard(
@@ -20,9 +22,9 @@ class ProfileCard extends ConsumerWidget {
               const SizedBox(width: 8),
               Text(
                 "Power Profile",
-                style: Theme.of(
-                  context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -63,6 +65,9 @@ class ProfileCard extends ConsumerWidget {
                     ),
                     padding: WidgetStateProperty.all(EdgeInsets.zero),
                     visualDensity: VisualDensity.compact,
+                    side: WidgetStateProperty.all(
+                      BorderSide(color: theme.colorScheme.outlineVariant),
+                    ),
                   ),
                 ),
               );
