@@ -1,6 +1,6 @@
-import 'package:asusctl_gui/main.dart';
 import 'package:asusctl_gui/services/shell.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 
 enum Aura { static, breathe, rainbowCycle, rainbowWave, highlight }
 
@@ -16,10 +16,12 @@ class AuraState {
 }
 
 class AuraNotifier extends AsyncNotifier<AuraState> {
+  GetStorage box = GetStorage();
+
   @override
   Future<AuraState> build() async {
-    String mode = storage.read("aura-mode") ?? Aura.static.name;
-    String color = storage.read("aura-color") ?? "ffffff";
+    String mode = box.read("aura-mode") ?? Aura.static.name;
+    String color = box.read("aura-color") ?? "ffffff";
 
     return AuraState(
       mode: Aura.values.firstWhere((e) => e.name == mode),
@@ -69,8 +71,8 @@ class AuraNotifier extends AsyncNotifier<AuraState> {
       throw Exception("Failed to set aura: ${result.stderr}");
     }
 
-    storage.write("aura-mode", aura.name);
-    storage.write("aura-color", color);
+    box.write("aura-mode", aura.name);
+    box.write("aura-color", color);
 
     state = AsyncValue.data(
       currentState?.copyWith(mode: aura) ?? AuraState(mode: aura, color: color),
@@ -105,8 +107,8 @@ class AuraNotifier extends AsyncNotifier<AuraState> {
       throw Exception("Failed to set aura color: ${result.stderr}");
     }
 
-    storage.write("aura-mode", targetMode.name);
-    storage.write("aura-color", color);
+    box.write("aura-mode", targetMode.name);
+    box.write("aura-color", color);
 
     state = AsyncValue.data(
       currentState?.copyWith(mode: targetMode, color: color) ??

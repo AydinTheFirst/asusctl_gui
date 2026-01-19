@@ -10,10 +10,11 @@ import 'package:get_storage/get_storage.dart';
 import 'package:logger/logger.dart';
 
 Logger logger = Logger();
-GetStorage storage = GetStorage();
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await GetStorage.init();
 
   runApp(const ProviderScope(child: MyApp()));
 }

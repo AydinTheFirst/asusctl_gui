@@ -1,9 +1,17 @@
 import 'package:asusctl_gui/services/shell.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 
 class BatteryLimitNotifier extends AsyncNotifier<int> {
+  GetStorage box = GetStorage();
+
   @override
   Future<int> build() async {
+    final storedLimit = box.read("battery-limit");
+    if (storedLimit != null) {
+      return storedLimit;
+    }
+
     final result = await shell.run("asusctl", [
       "battery",
       "info",
@@ -34,6 +42,8 @@ class BatteryLimitNotifier extends AsyncNotifier<int> {
     if (result.exitCode != 0) {
       throw Exception("Failed to set battery limit: ${result.stderr}");
     }
+
+    box.write("battery-limit", limit);
 
     state = AsyncValue.data(limit);
   }

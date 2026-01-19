@@ -1,14 +1,16 @@
 import 'dart:io';
 
-import 'package:asusctl_gui/main.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_storage/get_storage.dart';
 
 enum LedsLevel { off, low, med, high }
 
 class LedsNotifier extends AsyncNotifier<LedsLevel> {
+  GetStorage box = GetStorage();
+
   @override
   Future<LedsLevel> build() async {
-    String level = storage.read("leds-level") ?? LedsLevel.high.name;
+    String level = box.read("leds-level") ?? LedsLevel.high.name;
 
     return LedsLevel.values.firstWhere((e) => e.name == level);
   }
@@ -20,7 +22,7 @@ class LedsNotifier extends AsyncNotifier<LedsLevel> {
       throw Exception("Failed to set LEDs level: ${result.stderr}");
     }
 
-    storage.write("leds-level", level.name);
+    box.write("leds-level", level.name);
 
     state = AsyncValue.data(level);
   }

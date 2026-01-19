@@ -26,6 +26,9 @@ This application relies on `asusctl` to interact with your hardware.
     ```
 
 ## 🛠️ Installation & Building
+
+### Quick Install
+
 ```sh
 curl -sSL https://raw.githubusercontent.com/AydinTheFirst/asusctl_gui/main/install.sh | bash
 ```
