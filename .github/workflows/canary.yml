@@ -1,4 +1,4 @@
-name: Canary Build
+name: Canary Build (Binary Only)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build & Test
+    name: Build Binary
     runs-on: ubuntu-latest
 
     steps:
@@ -16,75 +16,18 @@ jobs:
         with:
           channel: 'stable'
       
-      - name: Install Tools
+      - name: Install Build Tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev ruby-dev build-essential
-          sudo gem install fpm
-
-      - name: Get Version
-        run: |
-          VERSION=$(grep 'version:' pubspec.yaml | cut -d ' ' -f 2 | cut -d '+' -f 1)
-          SHORT_SHA=$(git rev-parse --short HEAD)
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-          echo "SHORT_SHA=${SHORT_SHA}" >> $GITHUB_ENV
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev build-essential
 
       - name: Build
         run: |
           flutter config --enable-linux-desktop
-          flutter build linux --release --build-name=${{ env.VERSION }}
+          flutter build linux --release
 
-      - name: Package (DEB & RPM)
-        run: |
-          # Prepare directory structure
-          PKG_ROOT="build_pkg"
-          mkdir -p $PKG_ROOT/opt/asusctl_gui
-          mkdir -p $PKG_ROOT/usr/share/applications
-          mkdir -p $PKG_ROOT/usr/bin
-          
-          # Copy binary bundle
-          cp -r build/linux/x64/release/bundle/* $PKG_ROOT/opt/asusctl_gui/
-          
-          # Create symlink
-          ln -s /opt/asusctl_gui/asusctl_gui $PKG_ROOT/usr/bin/asusctl-gui
-
-          # Create Desktop file
-          cat <<EOF > $PKG_ROOT/usr/share/applications/asusctl-gui.desktop
-          [Desktop Entry]
-          Name=AsusCtl GUI
-          Comment=GUI for asusctl
-          Exec=/opt/asusctl_gui/asusctl_gui
-          Icon=/opt/asusctl_gui/data/flutter_assets/assets/icon.png
-          Terminal=false
-          Type=Application
-          Categories=Utility;System;
-          EOF
-
-          # Build DEB
-          fpm -s dir -t deb -n "asusctl-gui" -v "${{ env.VERSION }}" \
-            --iteration "canary.${{ env.SHORT_SHA }}" \
-            -a amd64 \
-            -d "libgtk-3-0" \
-            --description "GUI for AsusCtl" \
-            -C $PKG_ROOT .
-
-          # Build RPM
-          fpm -s dir -t rpm -n "asusctl-gui" -v "${{ env.VERSION }}" \
-            --iteration "canary.${{ env.SHORT_SHA }}" \
-            -a x86_64 \
-            --description "GUI for AsusCtl" \
-            -C $PKG_ROOT .
-
-      - name: Create Portable Tarball
-        run: |
-          cd build/linux/x64/release/bundle
-          tar -czvf ../../../../../asusctl-gui-portable-${{ env.VERSION }}-${{ env.SHORT_SHA }}.tar.gz *
-
-      - name: Upload Artifacts
+      - name: Upload Binary Bundle
         uses: actions/upload-artifact@v4
         with:
-          name: linux-builds
-          path: |
-            *.deb
-            *.rpm
-            *.tar.gz
+          name: asusctl-gui-linux
+          path: build/linux/x64/release/bundle/
