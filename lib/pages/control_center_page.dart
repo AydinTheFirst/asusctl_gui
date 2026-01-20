@@ -3,6 +3,7 @@ import 'package:asusctl_gui/widgets/aura_card.dart';
 import 'package:asusctl_gui/widgets/battery_card.dart';
 import 'package:asusctl_gui/widgets/info_card.dart';
 import 'package:asusctl_gui/widgets/profile_card.dart';
+import 'package:asusctl_gui/widgets/sensors_card.dart';
 import 'package:asusctl_gui/widgets/theme_toggler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +30,8 @@ class ControlCenterPage extends ConsumerWidget {
             padding: const EdgeInsets.all(16.0),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                const SensorsCard(),
+                const SizedBox(height: 16),
                 const ProfileCard(),
                 const SizedBox(height: 16),
                 const BatteryCard(),
