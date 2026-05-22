@@ -4,13 +4,16 @@ A modern, lightweight, and beautiful GUI for [asusctl](https://gitlab.com/asus-l
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-Linux-green.svg)
-[![Live Demo](https://img.shields.io/badge/demo-online-green)](https://aydinthefirst.github.io/asusctl_gui/)
+[![Live Demo](https://img.shields.io/badge/demo-online-green)](https://awaiden.github.io/asusctl_gui/)
 
 Tamamdır aga, lafı uzatmadan düz Markdown formatında çakıyorum. Readme dosyasına veya uygulama içi "Hakkında" kısmına direkt yapıştırabilirsin:
 
 ### ✨ Features
 
-- **Sensor Monitor**: View real-time sensor stats and details.
+- **Sensor Monitor**: View real-time CPU/GPU fan speeds and temperatures.
+  - Reads directly from sysfs (works on Fedora and all Linux distros)
+  - Falls back to `lm-sensors` if available
+  - GPU temperature via `nvidia-smi` for NVIDIA cards
 - **Modern UI**: A sleek, glassmorphism-inspired interface designed for aesthetics and usability.
 
 ### asusctl provided features
@@ -36,7 +39,7 @@ This application relies on `asusctl` to interact with your hardware.
 ### Quick Install
 
 ```sh
-curl -sSL https://raw.githubusercontent.com/AydinTheFirst/asusctl_gui/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/awaiden/asusctl_gui/main/install.sh | bash
 ```
 
 ### From Source
@@ -44,7 +47,7 @@ curl -sSL https://raw.githubusercontent.com/AydinTheFirst/asusctl_gui/main/insta
 1.  **Clone the repository**:
 
     ```bash
-    git clone https://github.com/AydinTheFirst/asusctl_gui.git
+    git clone https://github.com/awaiden/asusctl_gui.git
     cd asusctl_gui
     ```
 

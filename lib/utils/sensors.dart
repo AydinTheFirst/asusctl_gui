@@ -26,6 +26,90 @@ class SensorNotifier extends StreamNotifier<SensorState> {
 
   Future<SensorState> _readSensors() async {
     try {
+      // Try sysfs first (works on Fedora and most Linux distros without lm-sensors)
+      final sensors = await _readFromSysfs();
+      if (sensors != null) return sensors;
+
+      // Fall back to sensors command if sysfs fails
+      return await _readFromSensorsCommand();
+    } catch (e) {
+      return const SensorState();
+    }
+  }
+
+  Future<SensorState?> _readFromSysfs() async {
+    try {
+      int cpuSpeed = 0;
+      int gpuSpeed = 0;
+      double cpuTemp = 0.0;
+      double gpuTemp = 0.0;
+
+      // Read fan speeds from ASUS hwmon
+      // Find the asus hwmon device
+      final hwmonPath = await _findHwmonByName('asus');
+      if (hwmonPath != null) {
+        cpuSpeed = await _readSysfsInt('$hwmonPath/fan1_input');
+        gpuSpeed = await _readSysfsInt('$hwmonPath/fan2_input');
+      }
+
+      // Read CPU temperature from coretemp
+      final coretempPath = await _findHwmonByName('coretemp');
+      if (coretempPath != null) {
+        final tempMilliCelsius = await _readSysfsInt('$coretempPath/temp1_input');
+        cpuTemp = tempMilliCelsius / 1000.0;
+      }
+
+      // Read GPU temperature from nvidia-smi
+      try {
+        final result = await shell.run('nvidia-smi', [
+          '--query-gpu=temperature.gpu',
+          '--format=csv,noheader',
+        ]);
+        final output = result.stdout.toString().trim();
+        if (output.isNotEmpty) {
+          gpuTemp = double.tryParse(output) ?? 0.0;
+        }
+      } catch (e) {
+        // nvidia-smi not available or failed
+      }
+
+      return SensorState(
+        cpuSpeed: cpuSpeed,
+        gpuSpeed: gpuSpeed,
+        cpuTemp: cpuTemp,
+        gpuTemp: gpuTemp,
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<String?> _findHwmonByName(String name) async {
+    try {
+      // Use grep to find the hwmon device with matching name
+      final result = await shell.run('sh', [
+        '-c',
+        'grep -l "^$name\$" /sys/class/hwmon/hwmon*/name 2>/dev/null | head -1 | xargs dirname',
+      ]);
+      final path = result.stdout.toString().trim();
+      return path.isEmpty ? null : path;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<int> _readSysfsInt(String path) async {
+    try {
+      final result = await shell.run('cat', [path]);
+      final value = result.stdout.toString().trim();
+      return int.tryParse(value) ?? 0;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  Future<SensorState> _readFromSensorsCommand() async {
+    try {
       final result = await shell.run('sensors', []);
       final output = result.stdout.toString();
 

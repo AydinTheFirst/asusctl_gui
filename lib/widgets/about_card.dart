@@ -65,8 +65,8 @@ class AboutCard extends StatelessWidget {
             context,
             icon: Icons.person_outline,
             label: "Developer",
-            value: "@AydinTheFirst",
-            url: "https://github.com/AydinTheFirst",
+            value: "@awaiden",
+            url: "https://github.com/awaiden",
           ),
           const SizedBox(height: 12),
           _buildLinkRow(
@@ -75,7 +75,7 @@ class AboutCard extends StatelessWidget {
             label: "License",
             value: "MIT License",
             url:
-                "https://github.com/AydinTheFirst/asusctl_gui/blob/main/LICENSE",
+                "https://github.com/awaiden/asusctl_gui/blob/main/LICENSE",
           ),
           const SizedBox(height: 12),
           _buildLinkRow(
@@ -83,7 +83,7 @@ class AboutCard extends StatelessWidget {
             icon: Icons.star_border,
             label: "Repository",
             value: "Star on GitHub",
-            url: "https://github.com/AydinTheFirst/asusctl_gui",
+            url: "https://github.com/awaiden/asusctl_gui",
             isHighlight: true,
           ),
         ],
