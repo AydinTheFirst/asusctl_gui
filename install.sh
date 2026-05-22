@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # --- CONFIGURATION ---
-REPO_OWNER="AydinTheFirst" 
+REPO_OWNER="awaiden"
 REPO_NAME="asusctl_gui"
 
 APP_NAME="asusctl_gui"
